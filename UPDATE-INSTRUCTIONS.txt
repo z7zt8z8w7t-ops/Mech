@@ -1,12 +1,4 @@
-MECH v0.53 — update from v0.52
-
-This is an update package, not the complete game. Keep your existing unchanged files.
-
-For the v0.52 GitHub ZIP layout (index.html at repository root): upload the contents of this ZIP into that same root, replacing matching files. Merge the assets folder rather than replacing it.
-
-If your repository instead has a dist folder, place these files inside dist.
-
-DELETE this old file from the repository:
-  assets/junkyard-tutorial-v2.png
-
-Includes toolbar removal, open tutorial floor, component collision footprints, comic page-turn transitions, and the updated offline cache.
+MECH v0.54 — apply over v0.53.
+Replace arena.js, index.html and sw.js in the repository root.
+Darkens tutorial concrete and adds a live health bar above the controls.
+The service worker cache version is updated. Reload after the update is installed.

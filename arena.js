@@ -16,7 +16,7 @@ function loadArenaFloor(){
 }
 const arenaFloorLoading=loadArenaFloor();
 function drawArenaGround(g){
- if(arenaFloorReady){g.drawImage(arenaFloor,0,0,ARENA.width,ARENA.height);return;}
+ if(arenaFloorReady){g.drawImage(arenaFloor,0,0,ARENA.width,ARENA.height);g.save();g.fillStyle='rgba(5,9,12,0.42)';g.fillRect(0,0,ARENA.width,ARENA.height);g.restore();return;}
  g.fillStyle='#17292d';g.fillRect(0,0,ARENA.width,ARENA.height);g.strokeStyle='#284047';g.lineWidth=1;g.beginPath();for(let x=0;x<=ARENA.width;x+=50){g.moveTo(x,0);g.lineTo(x,ARENA.height);}for(let y=0;y<=ARENA.height;y+=50){g.moveTo(0,y);g.lineTo(ARENA.width,y);}g.stroke();
 }
 
