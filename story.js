@@ -1,0 +1,14 @@
+'use strict';
+window.StoryFlow=(()=>{
+ if(typeof document.body.insertAdjacentHTML!=='function')return {active:false};
+ document.body.insertAdjacentHTML('beforeend',`<section id="story-screen" class="splash" aria-label="MECH story"><div id="story-art"><img id="story-image" src="./assets/story/splash.jpg" alt="MECH — Voss in shadow"><button id="story-start">STORY MODE</button><div id="story-error" hidden>Page could not load. Check your connection and retry.<br><button id="story-retry">RETRY PAGE</button></div></div><nav id="story-nav" aria-label="Comic navigation" hidden><button id="story-back">← BACK</button><span id="story-page-label"></span><button id="story-skip">SKIP</button><button id="story-next">TURN PAGE →</button></nav><div id="story-fade"></div></section>`);
+ const screen=$('#story-screen'),image=$('#story-image'),start=$('#story-start'),nav=$('#story-nav'),error=$('#story-error');const pages=['cover','page1','page2','page3'];let page=-1,busy=false,epoch=0;
+ const reduced=()=>typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+ function showPage(n){page=n;screen.classList.toggle('splash',n<0);start.hidden=n>=0;nav.hidden=n<0;image.src='./assets/story/'+(n<0?'splash':pages[n])+'.jpg';image.alt=n<0?'MECH — Voss in shadow':n===0?'MECH Season 1 — Fresh Meat cover':'MECH opening comic, page '+n;$('#story-page-label').textContent=n===0?'FRONT COVER':n>0?'PAGE '+n+' / 3':'';$('#story-next').textContent=n===3?'TUTORIAL →':'TURN PAGE →';error.hidden=true;}
+ function splash(){epoch++;busy=false;screen.hidden=false;screen.classList.remove('fading','revealing');document.body.classList.add('story-active');clearInput();window.CockpitBoot?.close();showPage(-1);}
+ function begin(){if(busy)return;GameAudio.unlock();busy=true;start.disabled=true;screen.classList.add('fading');const token=++epoch;setTimeout(()=>{if(token!==epoch)return;showPage(0);screen.classList.add('revealing');requestAnimationFrame(()=>{screen.classList.remove('fading');});setTimeout(()=>{if(token!==epoch)return;busy=false;start.disabled=false;screen.classList.remove('revealing');},reduced()?100:1000);},reduced()?100:2500);}
+ function tutorial(){if(busy)return;epoch++;screen.hidden=true;document.body.classList.remove('story-active');clearInput();window.Tutorial.start();enterWorkshop();}
+ start.onclick=begin;$('#story-back').onclick=()=>{if(busy)return;if(page<=0)splash();else showPage(page-1);};$('#story-next').onclick=()=>{if(busy)return;if(page===3)tutorial();else showPage(page+1);};$('#story-skip').onclick=tutorial;
+ image.onerror=()=>{error.hidden=false;};image.onload=()=>{error.hidden=true;};$('#story-retry').onclick=()=>{const src=image.src;image.src='';image.src=src;};
+ splash();return {splash,showPage,get active(){return !screen.hidden;},get page(){return page;},begin,tutorial};
+})();

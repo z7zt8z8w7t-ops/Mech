@@ -1,0 +1,93 @@
+/* A floating loadout projection inside the physical cockpit. */
+body.workshop-mode{background:#030b09 url('./assets/cockpit-workshop.jpg') center/100% 100% no-repeat}
+#workshop{inset:12% 10% 24%;padding:0;display:grid;grid-template-columns:1fr;grid-template-rows:42px minmax(120px,1fr) 38px 24px clamp(95px,13vh,180px) 34px 44px 12px;gap:4px;background:none;border:0;border-radius:0;box-shadow:none;overflow:hidden;color:#bbffcf;font-family:ui-monospace,monospace;isolation:isolate}
+#workshop[hidden]{display:none}
+#workshop:before{content:'';position:absolute;inset:0;pointer-events:none;z-index:5;background:repeating-linear-gradient(0deg,transparent 0 3px,#a5ffd20b 3px 4px);opacity:.65}
+#workshop:after{display:none}
+#workshop button{background:transparent!important;border:0!important;border-radius:0;box-shadow:none!important;color:#a6efbd;font-family:inherit;text-shadow:0 0 8px #6bff9b66;min-height:40px;padding:6px 10px}
+#workshop button.active,#workshop button[aria-selected=true]{background:transparent!important;color:#d4ffe0;box-shadow:none!important}
+#workshop button:focus-visible,.ws-weapon-info:focus-visible{outline:2px solid #baffce;outline-offset:-2px}
+.ws-header{grid-column:1;grid-row:1;justify-content:center;text-align:center;padding:0;position:relative;border-bottom:1px solid #8cffb566}
+.ws-header h1{font:500 clamp(15px,2.5vw,27px)/1.3 ui-monospace,monospace;letter-spacing:5px;color:#d1ffe1;text-shadow:0 0 13px #76ffa1b0}
+.ws-header p,.ws-badge{display:none}
+.ws-stage{grid-column:1;grid-row:2;border:0;border-radius:0;background:none;min-height:0;overflow:hidden}
+.ws-stage canvas{filter:drop-shadow(0 0 3px #72ffa666)}
+.ws-stage-title{top:8px}.ws-stage-title b{color:#bbffcd;font-size:12px;letter-spacing:6px}.ws-stage-title small{display:none}
+.ws-weapon-info{width:24%;padding:8px 7px;background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0;color:#b8ffd0;backdrop-filter:none;line-height:1.3;text-shadow:0 0 7px #71ffa17a;min-height:44px}
+.ws-weapon-info.left{left:0;text-align:left}.ws-weapon-info.right{right:0;text-align:right}.ws-weapon-info.upper{top:17%}.ws-weapon-info.lower{bottom:9%}
+.ws-weapon-info b{font-size:clamp(8px,1.2vw,12px);color:#aeffc9;letter-spacing:1.1px}.ws-weapon-info strong{font-size:clamp(9px,1.4vw,14px);font-weight:400;color:#d4ffdf;margin:5px 0;white-space:normal}.ws-weapon-info p,.ws-weapon-info small{display:none}
+.ws-weapon-info.active:before,.ws-weapon-info.active:after{content:'';position:absolute;width:10px;height:8px;border-color:#ceffdc;border-style:solid;filter:drop-shadow(0 0 3px #6bff9c)}
+.ws-weapon-info.active:before{left:0;top:0;border-width:2px 0 0 2px}.ws-weapon-info.active:after{right:0;bottom:0;border-width:0 2px 2px 0}
+.ws-tabs{grid-column:1;grid-row:3;display:flex;justify-content:center;gap:25px}.ws-tabs button{min-width:125px;letter-spacing:3px!important;font-size:13px!important;position:relative}
+.ws-tabs button[aria-selected=true]:after{content:'';position:absolute;height:2px;bottom:1px;left:10px;right:10px;background:#baffcb;box-shadow:0 0 9px #72ffa9}
+.ws-brief{grid-column:1;grid-row:4;justify-content:center;min-height:0;padding:0}.ws-brief>div:first-child{display:none}.ws-filters{justify-content:center;gap:14px}.ws-filters button{font-size:8px!important;min-height:22px!important;padding:2px!important;opacity:.6}.ws-filters button.active{opacity:1;color:#d1ffe0}
+.ws-carousel{grid-column:1;grid-row:5;height:auto;min-height:0;padding:0 25px}
+#workshop .ws-card{top:0;bottom:0;width:33%;padding:1px!important;border:0!important;display:grid;grid-template-rows:minmax(0,1fr) 22px 0;background:none!important;box-shadow:none!important;overflow:hidden}
+#workshop .ws-card.center{background:none!important;box-shadow:none!important;border:0!important}.ws-card canvas{filter:drop-shadow(0 0 3px #73ffa0aa)}.ws-card b{font-size:clamp(9px,1.5vw,14px);font-weight:400;letter-spacing:1px;line-height:22px;color:#d0ffde}.ws-card:not(.center) b{visibility:hidden}.ws-card small{display:none}
+#workshop .ws-arrow{top:30%;width:25px!important;font-size:30px!important;min-height:44px!important;background:none!important}.ws-arrow.prev{left:0}.ws-arrow.next{right:0}
+.ws-description{grid-column:1;grid-row:6;min-height:0;padding:0 6px}.ws-description p{margin:0;color:#a8f8c1;font:11px/1.3 ui-monospace,monospace;text-shadow:0 0 6px #75ffad66}.ws-description small{font:8px/1.3 ui-monospace,monospace;color:#75b98e}
+.ws-actions{grid-column:1;grid-row:7;display:flex;justify-content:center;align-items:center}
+#workshop #ws-test{min-height:38px!important;width:42%;border:1px solid #b2ffcb!important;clip-path:polygon(5% 0,95% 0,100% 25%,100% 75%,95% 100%,5% 100%,0 75%,0 25%);background:#3aff8010!important;color:#d6ffe1;font-size:15px;letter-spacing:5px;box-shadow:inset 0 0 15px #87ffab12!important}
+.ws-foot{grid-column:1;grid-row:8;font-size:7px;color:#87cba2;justify-content:center}.ws-foot #offline-state{display:none}
+/* Broad projected surface: the fan opens in the short gap below Deploy. */
+#cockpit-beam{position:fixed;bottom:17.5%;left:3%;right:3%;height:72%;pointer-events:none;z-index:19;overflow:hidden;background:linear-gradient(0deg,#6aff9c30,#72ffad14 12%,#7affb013 85%,#a3ffd920);clip-path:polygon(49% 100%,3% 94%,0 4%,5% 0,95% 0,100% 4%,97% 94%,51% 100%);filter:blur(.7px);mix-blend-mode:screen}
+#cockpit-beam:before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 4px,#9affbf0a 4px 5px);box-shadow:inset 0 0 34px #79ffad24}
+#cockpit-beam:after{content:'';position:absolute;left:0;right:0;top:calc(var(--refresh-y,-20) * 1%);height:8%;opacity:0;background:linear-gradient(0deg,transparent,#adffd54a 75%,#ddffe990 94%,transparent);filter:blur(1px)}
+body.beam-refresh #cockpit-beam:after{opacity:var(--refresh-strength,.75)}
+body.beam-refresh #cockpit-beam{background-color:rgba(110,255,170,var(--refresh-flash,0))}
+@media(prefers-reduced-motion:reduce){#cockpit-beam:after{display:none}body.beam-refresh #cockpit-beam{background-color:transparent}}
+
+#cockpit-projector{position:fixed;left:46%;right:46%;bottom:17.3%;height:.7%;border-radius:50%;background:#b2ffd780;box-shadow:0 0 18px 10px #59ff9c40;z-index:19;pointer-events:none}
+body:not(.workshop-mode) #cockpit-beam,body:not(.workshop-mode) #cockpit-projector{display:none}
+@media(max-height:850px){#workshop{grid-template-rows:30px minmax(100px,1fr) 30px 20px 85px 28px 35px 10px;gap:2px}.ws-header h1{font-size:17px;letter-spacing:3px}.ws-tabs button{min-height:28px!important}.ws-stage-title{top:3px}#workshop #ws-test{min-height:31px!important;font-size:12px}.ws-description p{font-size:9px}}
+@media(max-width:600px){#workshop{left:8%;right:8%}.ws-header h1{font-size:15px;letter-spacing:3px}.ws-weapon-info{width:24%;padding:5px}.ws-weapon-info strong{font-size:9px}.ws-weapon-info b{font-size:7px}.ws-tabs{gap:8px}.ws-tabs button{min-width:100px;font-size:11px!important}.ws-filters{gap:9px}.ws-description p{font-size:9px}}
+@media(orientation:landscape){#workshop{inset:10% 12% 22%;grid-template-columns:1fr 1fr;grid-template-rows:30px minmax(50px,1fr) 25px 25px 30px 10px;column-gap:20px}.ws-header{grid-column:1/-1;grid-row:1}.ws-stage{grid-column:1;grid-row:2/6}.ws-tabs{grid-column:2;grid-row:2;align-self:start}.ws-brief{grid-column:2;grid-row:3}.ws-carousel{grid-column:2;grid-row:2/5;margin-top:36px;margin-bottom:25px}.ws-description{grid-column:2;grid-row:4}.ws-actions{grid-column:2;grid-row:5}.ws-foot{grid-column:1/-1;grid-row:6}.ws-stage-title b{font-size:10px}.ws-weapon-info strong{font-size:8px}.ws-weapon-info b{font-size:7px}}
+
+/* Equipment selection follows the saved loadout, independently of browsing. */
+#workshop .ws-card.equipped{color:#effff2;filter:drop-shadow(0 0 6px #8bffae80)}
+#workshop .ws-card.equipped canvas{filter:drop-shadow(0 0 6px #99ffbccc)}
+#workshop .ws-card.equipped b{visibility:visible;color:#e3ffea}
+.ws-card.equipped:before,.ws-card.equipped:after{content:'';position:absolute;width:18px;height:14px;border:2px solid #c4ffd4;pointer-events:none}
+.ws-card.equipped:before{left:5%;top:3px;border-right:0;border-bottom:0}.ws-card.equipped:after{right:5%;bottom:23px;border-left:0;border-top:0}
+#cockpit-blackout,#cockpit-lightwash{position:fixed;inset:0;pointer-events:none;display:none;z-index:18}
+body.workshop-mode #cockpit-blackout,body.workshop-mode #cockpit-lightwash{display:block}
+#cockpit-blackout{background:#000;opacity:0}
+#cockpit-lightwash{mix-blend-mode:screen;opacity:0;background:radial-gradient(ellipse at 5% 9%,#ff9d302e,transparent 24%),radial-gradient(ellipse at 95% 9%,#ff9d302e,transparent 24%),radial-gradient(ellipse at 8% 85%,#39bdff2c,transparent 25%),radial-gradient(ellipse at 92% 85%,#39bdff2c,transparent 25%),radial-gradient(ellipse at 50% 90%,#72ffad25,transparent 23%)}
+body.cockpit-awaiting #cockpit-blackout{opacity:.90}body.cockpit-awaiting #workshop,body.cockpit-awaiting #cockpit-beam,body.cockpit-awaiting #cockpit-projector{opacity:0;pointer-events:none}
+#cockpit-boot{position:fixed;inset:0;z-index:24;display:grid;place-items:center;color:#baffcf;font-family:ui-monospace,monospace;background:none}#cockpit-boot[hidden],#cockpit-boot [hidden]{display:none!important}
+#cockpit-power{background:#09341e66;border:1px solid #95ffb6;box-shadow:0 0 25px #6aff9a33;color:#ccffdc;padding:20px 30px;font:18px ui-monospace;letter-spacing:4px;cursor:pointer}#cockpit-power span{display:block;font:11px ui-monospace;letter-spacing:1px;margin-top:12px;color:#8fe2aa}
+#boot-hologram{position:absolute;top:29%;left:15%;right:15%;text-align:center;text-shadow:0 0 12px #72ffa4}.boot-orbit{width:145px;height:145px;position:relative;margin:auto;perspective:350px}.boot-orbit i{position:absolute;inset:0;border:1px solid #acffc7;border-radius:50%;box-shadow:0 0 12px #68ff9870;animation:bootRotate 2s linear infinite}.boot-orbit i:nth-child(2){inset:12px;animation-direction:reverse;animation-duration:1.5s}.boot-orbit i:nth-child(3){inset:26px;animation-duration:2.6s}.boot-orbit b{position:absolute;inset:0;display:grid;place-items:center;font-size:45px;font-weight:400}#boot-status{font-size:13px;letter-spacing:3px;margin:25px 0 10px}#boot-hologram small{font-size:9px;letter-spacing:2px}#boot-skip{display:block;margin:24px auto 0;background:transparent;border:0;color:#b5f9cc;min-height:44px;font:10px ui-monospace;letter-spacing:2px}
+@keyframes bootRotate{0%{transform:rotateX(55deg) rotateY(0deg) rotateZ(0deg)}100%{transform:rotateX(55deg) rotateY(360deg) rotateZ(180deg)}}
+@keyframes cockpitLights{0%,8%{opacity:.91}10%{opacity:.55}13%{opacity:.86}19%{opacity:.5}22%{opacity:.73}30%{opacity:.25}34%{opacity:.56}43%{opacity:.12}49%{opacity:.3}60%,100%{opacity:0}}
+@keyframes cockpitWash{0%,20%{opacity:0}24%{opacity:.2}28%{opacity:0}35%{opacity:.65}40%{opacity:.2}58%,100%{opacity:1}}
+@keyframes projectionRise{0%,47%{opacity:0;clip-path:inset(100% 0 0)}59%{opacity:.55;clip-path:inset(35% 0 0)}63%{opacity:.2}76%{opacity:1;clip-path:inset(0)}80%{opacity:.65}100%{opacity:1;clip-path:inset(0)}}
+@keyframes beamStart{0%,35%{opacity:0}40%{opacity:.7}44%{opacity:.15}51%,100%{opacity:1}}
+body.cockpit-booting #cockpit-blackout{animation:cockpitLights 3.7s both}body.cockpit-booting #cockpit-lightwash{animation:cockpitWash 3.7s both}body.cockpit-booting #workshop{animation:projectionRise 3.7s both;pointer-events:none}body.cockpit-booting #cockpit-beam,body.cockpit-booting #cockpit-projector{animation:beamStart 3.7s both}
+body.cockpit-booting #boot-hologram{animation:beamStart 2.1s both}body.cockpit-online #cockpit-lightwash{opacity:1}
+body.cockpit-short #cockpit-blackout{animation:none;opacity:0}body.cockpit-short #cockpit-lightwash{animation:none;opacity:1}body.cockpit-short #workshop,body.cockpit-short #cockpit-beam,body.cockpit-short #cockpit-projector{animation-duration:1.25s}body.cockpit-short #boot-hologram{animation:none}
+@media(prefers-reduced-motion:reduce){.boot-orbit i{animation:none;transform:rotateX(50deg)}body.cockpit-booting #cockpit-blackout{animation:none;opacity:.1}body.cockpit-booting #cockpit-lightwash{animation:none;opacity:1}body.cockpit-booting #workshop{animation:none;opacity:0}body.cockpit-booting #cockpit-beam,body.cockpit-booting #cockpit-projector,body.cockpit-booting #boot-hologram{animation:none;opacity:1}}
+
+/* Power control anchored to the plate in the full-viewport cockpit artwork. */
+#cockpit-power{position:absolute;left:50%;top:3.35%;transform:translate(-50%,-50%);width:clamp(44px,6vw,74px);height:auto;aspect-ratio:1;min-height:0;padding:0;border:2px solid #ff514c;border-radius:50%;background:radial-gradient(circle at 40% 30%,#63201d,#200706 75%);color:#ff6a62;display:grid;place-items:center;box-shadow:0 0 8px #ff332a66,inset 0 0 9px #ff35252b;animation:powerRedPulse 1.8s ease-in-out infinite;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#cockpit-power svg{width:62%;height:62%;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;filter:drop-shadow(0 0 3px #ff3a30)}
+#cockpit-power:focus-visible{outline:3px solid #ffe5df;outline-offset:5px}
+#cockpit-power:active{background:#9d241d;color:#fff0e5}
+@keyframes powerRedPulse{0%,100%{color:#eb423c;border-color:#a82b27;box-shadow:0 0 6px #ff302a44,inset 0 0 7px #ff352525}50%{color:#ffb5a9;border-color:#ff8274;box-shadow:0 0 20px #ff392aa0,inset 0 0 15px #ff3b4055}}
+@media(prefers-reduced-motion:reduce){#cockpit-power{animation:none;color:#ff887b}}
+
+#cockpit-power{position:fixed;z-index:25}
+#cockpit-power.powered{animation:none;background:radial-gradient(circle at 40% 30%,#154d2c,#052011 75%);color:#8dffb2;border-color:#54db83;box-shadow:0 0 12px #42eb7866,inset 0 0 10px #49e67c33;opacity:1}
+#cockpit-power.powered svg{filter:drop-shadow(0 0 3px #42ff87)}
+#cockpit-power[hidden],body:not(.workshop-mode) #cockpit-power{display:none!important}
+
+/* The welcome owns the projector until speech and its fade are complete. */
+body.cockpit-booting #workshop{animation:none;opacity:0;visibility:hidden;pointer-events:none}
+body.cockpit-welcome-out #boot-hologram{animation:welcomeFadeOut .45s ease-out both}
+body.cockpit-online #workshop{animation:menuAfterWelcome .65s ease-out both}
+@keyframes welcomeFadeOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-8px)}}
+@keyframes menuAfterWelcome{from{opacity:0;clip-path:inset(100% 0 0)}to{opacity:1;clip-path:inset(0)}}
+@media(prefers-reduced-motion:reduce){body.cockpit-welcome-out #boot-hologram,body.cockpit-online #workshop{animation:none}body.cockpit-welcome-out #boot-hologram{opacity:0}}
+
+/* Darkened canopy glass keeps the hangar behind the projection. */
+#cockpit-window-tint{display:none;position:fixed;inset:0;z-index:17;pointer-events:none;background:rgba(1,8,10,.67);clip-path:polygon(22% 8.3%,78% 8.3%,93.5% 14%,98% 35%,98% 53%,94% 68%,77% 77%,23% 77%,6% 68%,2% 53%,2% 35%,6.5% 14%)}
+body.workshop-mode #cockpit-window-tint{display:block}
