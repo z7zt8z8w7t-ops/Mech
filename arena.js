@@ -3,16 +3,9 @@
 // Expanded yard: same units per metre, with clearance for the complete armed silhouette.
 const ARENA={
  id:'junkyard',name:'Junkyard tutorial',hint:'JUNKYARD TUTORIAL · movement and target practice',width:1200,height:1800,
- artwork:{width:2400,height:3600,pixelsPerUnit:2,origin:'top-left',view:'orthographic-overhead',floor:'./assets/junkyard-tutorial-v2.png',sourceWidth:1024,sourceHeight:1536,layers:['floor','baked-scrap-cover']},
+ artwork:{width:2400,height:3600,pixelsPerUnit:2,origin:'top-left',view:'orthographic-overhead',floor:'./assets/junkyard-tutorial-open.png',sourceWidth:1024,sourceHeight:1536,layers:['floor','passable-flat-scrap']},
  spawn:{x:600,y:1500,angle:-Math.PI/2},
- cover:[
-  {x:0,y:0,w:120,h:1800,baked:true},{x:1080,y:0,w:120,h:1800,baked:true},
-  {x:144,y:0,w:912,h:48,baked:true},{x:144,y:1752,w:300,h:48,baked:true},
-  {x:756,y:1752,w:300,h:48,baked:true},
-  {x:120,y:48,w:180,h:250,baked:true},{x:900,y:48,w:180,h:210,baked:true},
-  {x:120,y:1480,w:170,h:272,baked:true},{x:900,y:1460,w:180,h:292,baked:true},
-  {x:346,y:558,w:180,h:228,baked:true},{x:633,y:904,w:219,h:226,baked:true}
- ],
+ cover:[],
  hazard:{x:0,y:0,w:0,h:0,enabled:false},
  targets:[{x:444,y:198},{x:600,y:198},{x:756,y:198}]
 };

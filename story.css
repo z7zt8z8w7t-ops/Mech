@@ -12,3 +12,12 @@
 #story-nav button{height:100%;min-height:0;padding:0 10px;border:0;border-radius:0;background:transparent;color:#181814;box-shadow:none;font:600 clamp(9px,1.3vw,16px)/1 'Chalkboard SE','Comic Sans MS',sans-serif;letter-spacing:.2px}
 #story-nav button:active{background:#27251d22}
 #story-page-label{color:#3e382c;font:clamp(8px,1vw,12px) 'Chalkboard SE','Comic Sans MS',sans-serif}
+
+#story-art{perspective:1800px}
+#story-turn-sheet{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:2;pointer-events:none;backface-visibility:hidden;transform-origin:left center}
+#story-turn-sheet[hidden]{display:none}
+#story-turn-sheet.turn-forward{animation:comicTurnForward .65s ease-in-out both}
+#story-turn-sheet.turn-back{transform-origin:right center;animation:comicTurnBack .65s ease-in-out both}
+@keyframes comicTurnForward{0%{transform:rotateY(0);filter:brightness(1);box-shadow:none}55%{filter:brightness(.6);box-shadow:25px 0 45px #0009}100%{transform:rotateY(-100deg);filter:brightness(.45)}}
+@keyframes comicTurnBack{0%{transform:rotateY(0);filter:brightness(1);box-shadow:none}55%{filter:brightness(.6);box-shadow:-25px 0 45px #0009}100%{transform:rotateY(100deg);filter:brightness(.45)}}
+@media(prefers-reduced-motion:reduce){#story-turn-sheet{animation:none!important}}
