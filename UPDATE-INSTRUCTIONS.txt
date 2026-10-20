@@ -1,2 +1,52 @@
-Apply over v0.54. Replace sw.js and assets/audio/autocannon-original.wav.
-Heavy autocannon now plays one bang per shot at its original pitch.
+MECH v0.56 — updated files only
+
+Apply over v0.53, v0.54 or v0.55. This update includes the darker arena,
+health bar and corrected single-bang heavy cannon sample.
+
+Extract the ZIP and copy its contents into your GitHub game repository,
+preserving the assets/audio folder structure and replacing matching files.
+Commit and push. Reload once the GitHub Pages update has deployed; close
+and reopen the page if Safari is still showing the previous cached version.
+
+CHANGES
+- Larger comic navigation inside the existing cream margin; visible cover turn button.
+- Curled-paper page transition with paper-turn sound; reverse curl for Back.
+- Approved Dave tutorial dialogue and order, without the reload lesson.
+- Repair locks movement, turret rotation and all firing; lights flash yellow.
+- Red warning lights accelerate before manual or automatic ejection.
+- Armoured upper section ejects on rockets, falls, then deploys an overhead
+  parachute canopy that hides the pod and drifts out of view.
+- Chassis detonates after the pod clears it: large fireball, actual mech-art
+  debris, a damaging expanding shockwave and a deep six-second blast sound.
+- Continuous windblown wreck smoke persists until the arena is reset.
+- Mechanical menu clicks and carousel detents.
+- Workshop ambience begins at power-on and continues through startup.
+- New effects and audio are included in the offline cache.
+
+VALIDATION
+JavaScript syntax, the complete tutorial sequence, repair and charged-fire
+interlocks, manual and automatic ejection, one hit per enemy from the blast,
+bounded persistent smoke, escape completion, curl rendering, power-on audio
+lifecycle, audio decoding, offline asset paths, ZIP integrity and patch
+completeness checked locally. Physical iPad/Safari testing is still needed.
+
+Included updated files:
+arena.js
+arsenal.js
+assets/audio/autocannon-original.wav
+assets/audio/chassis-explosion.wav
+assets/audio/escape-rocket.wav
+assets/audio/page-turn.wav
+assets/audio/ui-click.mp3
+assets/audio/ui-settle.mp3
+assets/audio/ui-tick.mp3
+audio.js
+catalog.js
+cockpit-boot.js
+index.html
+lifecycle.js
+story.css
+story.js
+sw.js
+tutorial.js
+workshop.js

@@ -10,7 +10,7 @@ window.CockpitBoot=(()=>{
  function finish(){clear();running=false;hologram.hidden=true;overlay.hidden=true;body.classList.remove('cockpit-awaiting','cockpit-short','cockpit-welcome-out');const token=epoch;later(()=>{if(token!==epoch)return;body.classList.remove('cockpit-booting');menu.style.visibility='';menu.inert=false;body.classList.add('cockpit-online');},200);}
  function start(short=false){
   menu.style.visibility='hidden';menu.inert=true;clear();running=true;powered=true;const token=epoch;overlay.hidden=false;power.hidden=false;power.disabled=true;power.classList.add('powered');power.setAttribute('aria-label','Cockpit power on');hologram.hidden=false;body.classList.remove('cockpit-awaiting','cockpit-online','cockpit-booting','cockpit-welcome-out');void overlay.offsetWidth;body.classList.add('cockpit-booting');body.classList.toggle('cockpit-short',short);status.textContent=short?'PROJECTOR INITIALISING':'SYSTEM INITIALISING';
-  GameAudio?.boot(short);
+  GameAudio?.workshopPower(true);GameAudio?.boot(short);
   later(()=>{if(token===epoch)status.textContent='PROJECTOR ONLINE';},short?450:1700);
   later(()=>{if(token!==epoch)return;status.textContent='WELCOME, PILOT';
    const minimum=short?700:1500,started=Date.now();let leaving=false;
@@ -20,7 +20,7 @@ window.CockpitBoot=(()=>{
  }
  power.onclick=()=>start(false);document.querySelector('#boot-skip').onclick=finish;
  function open(){menu.style.visibility='hidden';menu.inert=true;if(powered){start(true);return;}overlay.hidden=false;power.hidden=false;hologram.hidden=true;body.classList.add('cockpit-awaiting');body.classList.remove('cockpit-online');}
- function close(){clear();menu.style.visibility='';menu.inert=false;running=false;overlay.hidden=true;power.hidden=true;body.classList.remove('cockpit-awaiting','cockpit-online','cockpit-booting','cockpit-short','cockpit-welcome-out','beam-refresh');}
+ function close(){GameAudio?.workshopPower(false);clear();menu.style.visibility='';menu.inert=false;running=false;overlay.hidden=true;power.hidden=true;body.classList.remove('cockpit-awaiting','cockpit-online','cockpit-booting','cockpit-short','cockpit-welcome-out','beam-refresh');}
  document.addEventListener('visibilitychange',()=>{if(document.hidden&&running)finish();});window.addEventListener('pagehide',close);
  return {open,close};
 })();

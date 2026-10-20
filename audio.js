@@ -1,10 +1,10 @@
 'use strict';
 // All samples are local and cached. Audio is unlocked by a real user gesture.
 const GameAudio=(()=>{
- const approvedSamples=['breach-approved', 'scatter-approved', 'arc-approved', 'lance-charge', 'lance-fire', 'mini-launch', 'rocket-launch', 'heavy-launch', 'emp-launch', 'emp-impact', 'cluster-whistle', 'heavy-impact', 'rocket-impact', 'cluster-burst', 'cluster-impact'];
+ const approvedSamples=['page-turn','chassis-explosion','escape-rocket','breach-approved', 'scatter-approved', 'arc-approved', 'lance-charge', 'lance-fire', 'mini-launch', 'rocket-launch', 'heavy-launch', 'emp-launch', 'emp-impact', 'cluster-whistle', 'heavy-impact', 'rocket-impact', 'cluster-burst', 'cluster-impact'];
  const ids=[...approvedSamples,'machine','autocannon','rail','siege','gatling','pulse','beam','plasma','accelerator','charge','launch','explosion','cockpit-power','step-left','step-right','turret-start','turret-turn','turret-brake','ui-click','ui-tick','ui-settle','workshop-bed'];
  const buffers={},loops=new Map(),voices=new Set(),lastFire=[-99,-99,-99,-99];
- let roomVoice=null,lastUi=-99;
+ let roomVoice=null,lastUi=-99,roomPowered=false;
  let ac=null,master=null,effects=null,systems=null,loading=null,noise=null,shieldWas=false,turretWas=false;
  let weaponFast=null,weaponHeavy=null,machineRoom=null;const reverbs=[];
  const heavySounds=new Set(['autocannon','scatter','breach','rail','siege','plasma','lance','accelerator','launch','explosion']);
@@ -45,7 +45,11 @@ const GameAudio=(()=>{
  }
  function stopAll(keepRoom=false){for(const v of [...voices])if(!(keepRoom===true&&v===roomVoice))stop(v,.025);if(keepRoom!==true)roomVoice=null;for(const r of reverbs){r.node.buffer=null;r.node.buffer=r.impulse;}loops.clear();lastFire.fill(-99);shieldWas=false;turretWas=false;stopBoot();}
  function menu(kind='click'){if(!ac||settings.muted)return;const now=ac.currentTime;if(now-lastUi<(kind==='tick'?.045:.025))return;lastUi=now;voice(kind==='tick'?'ui-tick':kind==='settle'?'ui-settle':'ui-click',{gain:kind==='tick'?.24:.38,bus:'dry'});}
- function workshop(dt=0){const online=workshopOpen&&!document.hidden&&!settings.muted&&document.body.classList?.contains?.('cockpit-online')&&!document.body.classList?.contains?.('story-active');if(online){if(!roomVoice){roomVoice=voice('workshop-bed',{gain:.85,loop:true,bus:'systems'});if(roomVoice){roomVoice.amp.gain.cancelScheduledValues(ac.currentTime);roomVoice.amp.gain.setValueAtTime(0,ac.currentTime);roomVoice.amp.gain.linearRampToValueAtTime(.85,ac.currentTime+1.6);}}}else if(roomVoice){stop(roomVoice,.6);roomVoice=null;}}
+ function workshop(dt=0){const online=workshopOpen&&!document.hidden&&!settings.muted&&(roomPowered||document.body.classList?.contains?.('cockpit-online'))&&!document.body.classList?.contains?.('story-active');if(online){if(!roomVoice){roomVoice=voice('workshop-bed',{gain:.85,loop:true,bus:'systems'});if(roomVoice){roomVoice.amp.gain.cancelScheduledValues(ac.currentTime);roomVoice.amp.gain.setValueAtTime(0,ac.currentTime);roomVoice.amp.gain.linearRampToValueAtTime(.85,ac.currentTime+1.6);}}}else if(roomVoice){stop(roomVoice,.6);roomVoice=null;}}
+ function workshopPower(on){roomPowered=on;if(on)unlock().then(()=>workshop());else workshop();}
+ function pageTurn(){unlock().then(()=>voice('page-turn',{gain:.75,bus:'dry'}));}
+ function detonation(){voice('chassis-explosion',{gain:1.25,bus:'dry'});}
+ function escape(){voice('escape-rocket',{gain:.65,bus:'dry'});}
  function trainingFire(x,y){const distance=Math.hypot(x-mech.x,y-mech.y);voice('machine',{gain:.35/(1+distance/500),pan:Math.max(-.8,Math.min(.8,(x-mech.x)/600)),bus:'machine'});}
  function servoCue(brake){voice(brake?'turret-brake':'turret-start',{gain:brake?.32:.4,bus:'systems'});}
  function motion(previous,dt){
@@ -71,9 +75,9 @@ const GameAudio=(()=>{
  function explosion(p){if(!p.radius)return;const distance=Math.hypot(p.x-mech.x,p.y-mech.y),pan=Math.max(-.8,Math.min(.8,(p.x-mech.x)/600));const id=p.mode==='bomblet'?'cluster-impact':p.wid==='emp'?'emp-impact':p.wid==='heavy'?'heavy-impact':['mini','rockets'].includes(p.wid)?'rocket-impact':'explosion';voice(id,{gain:(p.wid==='mini'?.32:p.mode==='bomblet'?.36:.65)/(1+distance/500),rate:1,pan,bus:id==='explosion'?'effects':'dry'});}
  function split(p){const pan=Math.max(-.8,Math.min(.8,((p.x||mech.x)-mech.x)/600));voice('cluster-burst',{gain:.55,rate:1,pan,bus:'dry'});for(let n=0;n<5;n++)voice('cluster-whistle',{gain:.22,rate:1,pan:Math.max(-1,Math.min(1,pan+(n-2)*.3)),delay:.03+n*.035,bus:'dry'});}
  function sync(){
-  if(workshopOpen){if(document.hidden)stopAll();return;}if(ejected||mech.hp<=0||document.hidden){stopAll();return;}
+  if(workshopOpen){if(document.hidden)stopAll();return;}if(document.hidden){stopAll();return;}if(ejected||mech.hp<=0||isRepairing()||isEjectionWarning()){for(const v of loops.values())stop(v,.04);loops.clear();shieldWas=false;turretWas=false;return;}
   for(let i=0;i<4;i++){
-   const w=BY_ID[loadout.slots[i]],pressed=!!(held[i]||keys[String(i+1)]),pan=i===0||i===1?-.3:.3,active=pressed&&!overheated[i]&&clock-lastFire[i]<Math.max(.15,w.rate*1.6);
+   const w=BY_ID[loadout.slots[i]],pressed=!isRepairing()&&!isEjectionWarning()&&!!(held[i]||keys[String(i+1)]),pan=i===0||i===1?-.3:.3,active=pressed&&!overheated[i]&&clock-lastFire[i]<Math.max(.15,w.rate*1.6);
    synth('motor'+i,w.id==='gatling'&&spin[i]>.01,'sawtooth',35+spin[i]*145,.035+spin[i]*.035,pan);
    loop('gatling'+i,'gatling',w.id==='gatling'&&active&&spin[i]>=.95,{gain:.5,pan});
    loop('beam'+i,'beam',w.id==='beam'&&active,{gain:.35,pan});
@@ -94,7 +98,7 @@ const GameAudio=(()=>{
  function configure(key,value){if(key==='muted')settings.muted=!!value;else settings[key]=Math.max(0,Math.min(1,Number(value)));try{localStorage.setItem('mech-audio-v1',JSON.stringify(settings));}catch{}levels();if(settings.muted)stopAll();}
  if(typeof document.addEventListener==='function'){
   document.addEventListener('pointerdown',unlock,{capture:true});document.addEventListener('keydown',unlock,{capture:true});
-  document.addEventListener('click',e=>{const b=e.target?.closest?.('button,[data-info-slot]');if(!b||b.disabled||b.closest?.('.ws-card')||b.closest?.('#panel')||b.closest?.('header')&&!b.closest?.('#workshop-open'))return;unlock().then(()=>menu('click'));},{capture:true});
+  document.addEventListener('click',e=>{const b=e.target?.closest?.('button,[data-info-slot]');if(!b||b.disabled||['story-next','story-back'].includes(b.id)||b.closest?.('.ws-card')||b.closest?.('#panel')||b.closest?.('header')&&!b.closest?.('#workshop-open'))return;unlock().then(()=>menu('click'));},{capture:true});
   document.addEventListener('pointerup',()=>{if(ac)sync();});document.addEventListener('visibilitychange',()=>{if(document.hidden){stopAll();if(ac)ac.suspend().catch(()=>{});}});window.addEventListener('blur',stopAll);
  }
  function mountControls(){if(typeof document.body.insertAdjacentHTML!=='function')return;
@@ -102,7 +106,7 @@ const GameAudio=(()=>{
   for(const key of ['effects','systems','muted']){const el=document.querySelector('#audio-'+key);if(key==='muted')el.checked=settings[key];else el.value=settings[key];el.addEventListener('input',()=>configure(key,key==='muted'?el.checked:el.value));}
   document.querySelector('#audio-settings').addEventListener('pointerdown',()=>unlock().then(()=>{document.querySelector('#audio-ready').textContent=ac?'Sound ready':'Audio unavailable';}));
  }
- mountControls();return {boot,welcome,stopBoot,unlock,menu,workshop,trainingFire,clearGame:()=>stopAll(true),shot,explosion,split,sync,motion,stopAll,configure,ids};
+ mountControls();return {workshopPower,pageTurn,detonation,escape,boot,welcome,stopBoot,unlock,menu,workshop,trainingFire,clearGame:()=>stopAll(true),shot,explosion,split,sync,motion,stopAll,configure,ids};
 })();
 
 // Hook actual accepted shots, not fire-button presses or blocked attempts.

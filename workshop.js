@@ -26,7 +26,7 @@ function chooseTab(tab){wsTab=tab;wsFilter='All';const a=wsOptions(),id=tab==='c
 function moveCarousel(delta){const next=clampIndex(wsIndex+delta);if(next===wsIndex)return;wsMessage='';settleOn(next);}
 function equipCard(index){wsIndex=clampIndex(index);carouselTarget=wsIndex;carouselMoving=true;const choice=currentChoice(),cfg={chassis:loadout.chassis,slots:[...loadout.slots]};if(wsTab==='chassis')cfg.chassis=choice.id;else cfg.slots[wsSlot]=choice.id;equipConfig(cfg);cards.forEach(b=>delete b.dataset.item);wsMessage=saveFailed?'Equipped for this session. Local saving is unavailable.':choice.name+' equipped and saved.';updateWorkshop();}
 function enterWorkshop(){workshopOpen=true;clearInput();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.add('workshop-mode');ws.hidden=false;chooseTab(wsTab);drawWorkshop();window.CockpitBoot?.open();}
-function testLoadout(){window.CockpitBoot?.close();workshopOpen=false;clearInput();Object.keys(keys).forEach(k=>keys[k]=false);ws.hidden=true;document.body.classList.remove('workshop-mode');reset();last=performance.now();note('Test loadout · all weapons available in this prototype',5);}
+function testLoadout(){window.CockpitBoot?.close();workshopOpen=false;clearInput();Object.keys(keys).forEach(k=>keys[k]=false);ws.hidden=true;document.body.classList.remove('workshop-mode');reset();last=performance.now();note('',0);}
 
 function paintCard(canvas,item){
  const g=canvas.getContext('2d');canvas.width=400;canvas.height=260;g.clearRect(0,0,400,260);
