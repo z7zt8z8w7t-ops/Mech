@@ -1,27 +1,63 @@
-MECH v0.58 — updated files only
+MECH v0.59 — updated files only
 
-Apply over v0.57. Copy these files into the game repository root, keeping
-assets/audio intact and replacing matching files. Push the update, then
-close and reopen the game after deployment to refresh the offline cache.
+APPLY OVER v0.58. Copy the ZIP contents into the game repository root,
+preserving folders and replacing matching files. Push to GitHub, wait for
+deployment, then close and reopen the game so its offline cache refreshes.
 
-- Lower beep when selecting a hardpoint, including keyboard activation.
-- Higher confirmation beep only when intentionally equipping a weapon.
-- Continuous geared-motor whirr while the carousel moves, with pitch and
-  volume following its speed and a short coast/fade when it stops.
-- No carousel tick, settle or weapon-select sound when scrolling stops.
-- Whirr stops on workshop exit, power-off, mute or page hiding.
-- Selection beeps use the approved preview recordings.
+DAVE AND CONTROLS
+- Top-right comms display uses your supplied frame, unchanged, around a
+  direct crop of Dave from comic page 3. His face is NOT regenerated.
+- Brief connection flicker, subtle scan lines and portrait fade after
+  twelve seconds. Guidance text remains until the lesson is completed.
+- Existing agreed dialogue only; no added tutorial dialogue.
+- Worn metal console, recessed weapon controls, mechanical stick surrounds.
+- Red EJECT cap, clear label, hazard stripes and five-second hold-progress rim.
+- Existing control positions, weapon mapping and touch targets retained.
 
-Local checks: actual workshop selection handlers, carousel start/stop,
-audio loop lifecycle, no settle beep, syntax, WAV decoding, offline asset
-paths and ZIP integrity. Physical iPad/Safari testing is still needed.
+EJECTION AND MENU AUDIO
+- Manual and automatic ejection use the approved five-second countdown.
+- Accelerating warning beeps replace the klaxon and match the red flashes.
+- Carousel scrolling and stopping are silent; its whirr is no longer loaded.
+- Distinct hardpoint and weapon-confirmation beeps retained.
 
-Included files:
-assets/audio/carousel-whirr.wav
-assets/audio/hardpoint-select.wav
-assets/audio/weapon-select.wav
+THE BREAKERS YARD
+- First combat arena: 1340 x 2015 world units, approximately 25% more
+  total ground area than the 1200 x 1800 tutorial. Mech scale unchanged.
+- Dark warm-charcoal ground, scrap and containers, two opaque overhead
+  gantries with 45-foot clearance. Only ground bases and scrap block movement.
+- One enemy mech and three smaller attack rovers. Each rover has exactly
+  one independently rotating cannon, using the approved rover artwork.
+- Enemy navigation routes around obstructions. AI phases allocate at most
+  two simultaneous control actions: move/aim, aim/left-fire, move/right-fire,
+  or two fire controls. A firing thumb cannot also adjust aim.
+- Training enemies also patrol and aim; tutorial shooting remains limited
+  to the shield exercise. Combat enemies do not respawn.
+- Complete the tutorial and return to the workshop; the next DEPLOY enters
+  The Breakers Yard. Clearing all enemies shows victory; ejection recovers
+  the pilot and returns to the workshop after escape.
+
+CHECKS
+Local JS syntax, native canvas rendering, original-face crop, actual arena
+switching, support collision/pass-under clearance, enemy movement/shooting,
+two-action limit, victory/no-respawn, tutorial deployment, five-second manual
+and automatic ejection, repair lockout, warning audio, offline asset paths and
+ZIP integrity verified. Physical iPad/Safari UI testing is still needed.
+
+Updated files:
+arena.js
+arsenal.js
+assets/attack-rover.png
+assets/audio/eject-warning.wav
+assets/comms-frame.png
 audio.js
+battle.js
 catalog.js
+collision.js
+comms.js
+console.css
 index.html
+lifecycle.js
 sw.js
+training-mechs.js
+tutorial.js
 workshop.js

@@ -1,0 +1,37 @@
+/* Hardware finish preserves the locked control geometry and touch targets. */
+#panel{isolation:isolate;border-top:3px solid #73736a;background:radial-gradient(circle at 9px 8px,#9c9c90 0 2px,#242b2d 3px 5px,transparent 6px),radial-gradient(circle at calc(100% - 9px) 8px,#9c9c90 0 2px,#242b2d 3px 5px,transparent 6px),repeating-linear-gradient(0deg,#ffffff03 0 1px,transparent 1px 4px),linear-gradient(165deg,#3d4546,#1b2327 35%,#10171b 70%,#303739);box-shadow:inset 0 4px 6px #ffffff16,inset 0 -6px 12px #0009,0 -7px 18px #0008}
+#panel:before{content:'';position:absolute;inset:37px 5px 5px;border:1px solid #66716b55;border-radius:8px;box-shadow:inset 0 1px #000;pointer-events:none;z-index:-1}
+#health-bar{top:5px!important;height:21px!important;padding:3px 9px;background:linear-gradient(#080e0f,#1a2728);border:1px solid #7b8074;border-radius:2px;box-shadow:0 1px 0 #ffffff23,inset 0 2px 4px #000;color:#c7d0ba!important}
+#health-track{height:10px!important;box-shadow:inset 0 2px 4px #000;border-color:#33453e!important}#health-fill{background-image:repeating-linear-gradient(90deg,transparent 0 10px,#09120d77 10px 12px)!important}
+#panel>.pad,#panel>.turret-control{border:3px solid #686e69;box-shadow:0 4px 5px #000b,inset 0 0 0 4px #10171a,inset 0 0 0 6px #424c4b;background:radial-gradient(circle,#0a1012 0 24%,#172124 25% 53%,#6c7670 54% 56%,#202a2c 57% 66%,#11181b 67%);border-radius:50%}
+#panel .knob{border:2px solid #81938a;background:radial-gradient(circle at 35% 25%,#697b72,#344640 40%,#182821 70%);box-shadow:inset 0 2px 3px #d9f4df55,0 5px 8px #000c,0 0 0 5px #06110b77}
+#panel>.turret-control{gap:calc(4 * var(--u));padding:calc(9 * var(--u))}
+#panel>.turret-control button{width:calc(55 * var(--u));height:calc(94 * var(--u));background:linear-gradient(100deg,#48514e,#202b2b 45%,#101b1e);border:1px solid #7b8981;border-radius:9px;box-shadow:inset 0 2px 2px #fff2,0 4px 4px #000a;color:#d0dfce}
+#panel .weapons-left button,#panel .weapons-right button{border-width:2px!important;border-radius:9px;box-shadow:inset 0 3px 2px #ffffff29,inset 0 -4px 4px #000b,0 4px 5px #000a;position:relative}
+#panel [data-w]:before{content:'';position:absolute;inset:4px;border:1px solid #ffffff14;border-radius:4px;pointer-events:none;background:linear-gradient(#dbe7e50c,transparent 45%,#0003)}
+#panel .weapon-symbol{filter:drop-shadow(0 0 3px currentColor)}#panel .weapon-cells{filter:drop-shadow(0 0 2px #f1cd68)}
+#panel>#shield,#panel>#repair{border:2px solid #7b8780;border-radius:11px;box-shadow:inset 0 2px 3px #ffffff20,inset 0 -4px 4px #0009,0 4px 5px #000a}
+#panel>#repair{background:linear-gradient(145deg,#344b3b,#14271e 70%)!important}#panel>#shield{box-shadow:inset 0 0 0 4px #17282e,0 4px 6px #000b}
+#panel button.held{transform:translateY(2px);filter:brightness(1.15);box-shadow:inset 0 3px 5px #000a!important}
+#panel>#eject{padding:calc(7 * var(--u))!important;border:2px solid #9c9474!important;border-radius:10px;background:repeating-linear-gradient(135deg,#bba24d 0 6px,#161a17 6px 12px)!important;box-shadow:0 4px 6px #000c,inset 0 1px #fff7;overflow:visible}
+#eject .eject-face{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;height:100%;border:1px solid #dd7366;border-radius:5px;background:radial-gradient(ellipse at 45% 20%,#c9402b,#82231d 55%,#45110d);box-shadow:inset 0 2px 3px #ffb09c66,inset 0 -4px 5px #260704,0 1px 2px #000;color:#ffe9c9;letter-spacing:.5px;text-shadow:0 1px #340800}
+#eject .eject-face svg{width:calc(16 * var(--u));height:calc(16 * var(--u));fill:none;stroke:currentColor;stroke-width:2}
+#eject .eject-face b{font:900 calc(10 * var(--u))/1 system-ui}#eject .eject-face small{font:600 calc(5.5 * var(--u))/1 system-ui;color:#f4c9ac}
+#eject:after{content:'';position:absolute;inset:-5px;padding:3px;border-radius:13px;background:conic-gradient(#ffb54f calc(var(--eject-progress)*1%),transparent 0);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+#eject.arming .eject-face{animation:ejectWarning .35s steps(1) infinite}@keyframes ejectWarning{50%{filter:brightness(1.5)}}
+#panel .pad span,#panel .turret-control span{color:#b7c2b5;font-weight:700;text-shadow:0 1px #000;letter-spacing:1px}
+/* Dave's original frame surrounds a separate portrait so it remains reusable. */
+#tutorial-guide,body.workshop-mode #tutorial-guide{position:fixed;top:58px;bottom:auto;left:auto;right:max(9px,env(safe-area-inset-right));transform:none;width:clamp(190px,29vw,280px);max-width:42vw;padding:0;background:none;border:0;border-radius:0;box-shadow:none;font:12px/1.4 ui-monospace,monospace;pointer-events:none;z-index:35}
+.comms-picture{position:relative;width:100%;aspect-ratio:1448/1086;overflow:hidden;transform-origin:top right;transition:opacity .4s,max-height .4s;max-height:240px}
+.comms-portrait{position:absolute;left:7%;top:16%;width:86%;height:67%;object-fit:cover;object-position:center 32%;filter:saturate(.65) contrast(1.1);animation:commsSignal 4s ease-in-out infinite}
+.comms-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.comms-scan{position:absolute;left:7%;right:7%;top:16%;bottom:17%;background:repeating-linear-gradient(0deg,#06110b44 0 1px,transparent 1px 4px);box-shadow:inset 0 0 15px #001b15aa;pointer-events:none}
+.comms-name{position:absolute;bottom:14%;left:11%;color:#a2f3da;background:#00120ccc;padding:1px 4px;font:8px monospace;letter-spacing:1px}
+#tutorial-guide>b,#tutorial-guide>p,#tutorial-guide>small{background:#06130feb;margin:0;padding:7px 10px;border-left:1px solid #538e73;border-right:1px solid #538e73;color:#c6f8d7}
+#tutorial-guide>b{border-top:1px solid #538e73;font-size:9px;letter-spacing:1px;padding-bottom:2px}#tutorial-guide>small{border-bottom:1px solid #538e73;padding-top:2px;font-size:10px}
+#tutorial-guide>button{font-size:10px;min-height:44px;background:#132d21ed;margin:4px 0 0;width:100%;pointer-events:auto}
+#tutorial-guide.comms-quiet .comms-picture{opacity:0;max-height:0}#tutorial-guide.comms-connecting .comms-picture{animation:commsConnect .4s steps(1)}
+@keyframes commsConnect{0%,35%{opacity:.15;filter:brightness(2)}20%,60%,100%{opacity:1;filter:none}}@keyframes commsSignal{50%{filter:saturate(.6) contrast(1.07) brightness(1.05)}}
+@media(max-width:600px){#tutorial-guide,body.workshop-mode #tutorial-guide{top:52px;width:180px;max-width:48vw;font-size:10px}.comms-name{font-size:6px}#tutorial-guide>b{font-size:8px}}
+@media(prefers-reduced-motion:reduce){.comms-portrait,#tutorial-guide.comms-connecting .comms-picture,#eject.arming .eject-face{animation:none}.comms-picture{transition:none}}
+#battle-result{position:fixed;inset:0;display:grid;place-items:center;z-index:60;background:#030807b8;padding:24px}#battle-result[hidden]{display:none!important}#battle-result>div{max-width:420px;width:100%;padding:30px;background:linear-gradient(#273a34,#101b18);border:2px solid #8caa8c;box-shadow:0 12px 50px #000b;text-align:center;color:#e6ebd4}#battle-result h2{font-size:23px;letter-spacing:2px}#battle-result p{color:#adc4b3}#battle-result button{min-height:52px;padding:10px 22px;background:#294f3b;border-color:#8bd2a2;color:#deffe6}

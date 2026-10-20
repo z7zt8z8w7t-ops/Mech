@@ -31,7 +31,7 @@ window.MechLifecycle=(()=>{
   burst(wreck.x,wreck.y,'#ffd485',100);
  }
  function update(dt){
-  if(automatic&&!ejected){warning+=dt;eject=warning;if(warning>=1.5)launch();}
+  if(automatic&&!ejected){warning+=dt;eject=warning;if(warning>=5)launch();}
   GameAudio.ejectionWarning?.(isEjectionWarning());
   if(!wreck)return;wreck.age+=dt;
   const c=capsule;if(c){c.age+=dt;const t=c.age;
@@ -51,7 +51,7 @@ window.MechLifecycle=(()=>{
   smoke=smoke.filter(s=>s.age<s.life).slice(-180);
  }
  function lights(){if(ejected)return {on:false,colour:'#050807',rgb:'5,8,7'};
-  if(isEjectionWarning()){const t=automatic?warning:eject,on=Math.sin(TAU*(.8*t+1.2*t*t))>-.1;return {on,colour:on?'#ff3530':'#210807',rgb:on?'255,45,30':'5,2,1'};}
+  if(isEjectionWarning()){const t=automatic?warning:eject,on=Math.sin(TAU*(.6*t+.4*t*t))>-.1;return {on,colour:on?'#ff3530':'#210807',rgb:on?'255,45,30':'5,2,1'};}
   if(isRepairing()){const on=Math.sin(clock*TAU*2)>0;return {on,colour:on?'#ffd735':'#28210a',rgb:on?'255,210,40':'5,4,1'};}
   return {on:true,colour:'#e8ffdf',rgb:'220,244,218'};
  }
