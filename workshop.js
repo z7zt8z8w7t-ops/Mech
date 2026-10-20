@@ -1,6 +1,6 @@
 'use strict';
 let wsTab='weapons',wsSlot=0,wsIndex=0,wsFilter='All',wsCandidate=null,wsMessage='';
-let menuScrollKey='',menuScrollIndex=0;
+let carouselSoundKey='',carouselSoundPosition=0;
 let carouselPosition=0,carouselTarget=0,carouselVelocity=0,carouselMoving=false,swipe=null,suppressClickUntil=0;
 let glitchWait=10+Math.random()*15,glitchRemaining=0;
 let beamRefreshWait=3+Math.random()*4,beamRefreshRemaining=0,beamRefreshDuration=.65;
@@ -21,10 +21,10 @@ function currentChoice(){return wsOptions()[clampIndex(wsIndex)];}
 function previewLoadout(){const cfg={chassis:loadout.chassis,slots:[...loadout.slots]},choice=currentChoice();if(wsTab==='chassis')cfg.chassis=choice.id;else cfg.slots[wsSlot]=choice.id;return cfg;}
 function carouselPitch(){return Math.max(145,Math.min(350,carousel.getBoundingClientRect().width*.35));}
 function settleOn(index,instant=false){wsIndex=clampIndex(index);carouselTarget=wsIndex;if(instant){carouselPosition=wsIndex;carouselVelocity=0;carouselMoving=false;}else carouselMoving=true;updateWorkshop();}
-function chooseSlot(i){wsSlot=i;wsTab='weapons';wsFilter='All';const a=wsOptions();wsIndex=Math.max(0,a.findIndex(w=>w.id===loadout.slots[i]));wsMessage='';settleOn(wsIndex,true);}
+function chooseSlot(i){wsSlot=i;wsTab='weapons';wsFilter='All';const a=wsOptions();wsIndex=Math.max(0,a.findIndex(w=>w.id===loadout.slots[i]));wsMessage='';settleOn(wsIndex,true);GameAudio.menu('hardpoint');}
 function chooseTab(tab){wsTab=tab;wsFilter='All';const a=wsOptions(),id=tab==='chassis'?loadout.chassis:loadout.slots[wsSlot];wsIndex=Math.max(0,a.findIndex(w=>w.id===id));wsMessage='';settleOn(wsIndex,true);}
 function moveCarousel(delta){const next=clampIndex(wsIndex+delta);if(next===wsIndex)return;wsMessage='';settleOn(next);}
-function equipCard(index){wsIndex=clampIndex(index);carouselTarget=wsIndex;carouselMoving=true;const choice=currentChoice(),cfg={chassis:loadout.chassis,slots:[...loadout.slots]};if(wsTab==='chassis')cfg.chassis=choice.id;else cfg.slots[wsSlot]=choice.id;equipConfig(cfg);cards.forEach(b=>delete b.dataset.item);wsMessage=saveFailed?'Equipped for this session. Local saving is unavailable.':choice.name+' equipped and saved.';updateWorkshop();}
+function equipCard(index){wsIndex=clampIndex(index);carouselTarget=wsIndex;carouselMoving=true;const choice=currentChoice(),cfg={chassis:loadout.chassis,slots:[...loadout.slots]};if(wsTab==='chassis')cfg.chassis=choice.id;else cfg.slots[wsSlot]=choice.id;equipConfig(cfg);cards.forEach(b=>delete b.dataset.item);wsMessage=saveFailed?'Equipped for this session. Local saving is unavailable.':choice.name+' equipped and saved.';updateWorkshop();GameAudio.menu(wsTab==='weapons'?'weapon':'click');}
 function enterWorkshop(){workshopOpen=true;clearInput();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.add('workshop-mode');ws.hidden=false;chooseTab(wsTab);drawWorkshop();window.CockpitBoot?.open();}
 function testLoadout(){window.CockpitBoot?.close();workshopOpen=false;clearInput();Object.keys(keys).forEach(k=>keys[k]=false);ws.hidden=true;document.body.classList.remove('workshop-mode');reset();last=performance.now();note('',0);}
 
@@ -37,7 +37,7 @@ function paintCard(canvas,item){
  const a=artFor(item.id);if(!a.image?.complete||!a.image.width||!a.crop)return;const line=wireFor('card-'+item.id,a.image,a.crop);if(!line)return;const sc=Math.min(285/line.width,178/line.height);g.save();g.globalAlpha=.92;g.shadowColor='#62ff9a';g.shadowBlur=2;g.drawImage(line,200-line.width*sc/2,102-line.height*sc/2,line.width*sc,line.height*sc);g.restore();
 }
 function renderCarousel(){
- const soundKey=wsTab+':'+wsSlot+':'+wsFilter, soundIndex=Math.round(carouselPosition);if(soundKey===menuScrollKey&&soundIndex!==menuScrollIndex&&(swipe||carouselMoving))GameAudio.menu('tick');menuScrollKey=soundKey;menuScrollIndex=soundIndex;
+
  const options=wsOptions(),base=Math.round(carouselPosition),pitch=carouselPitch();
  cards.forEach((b,j)=>{
   const index=base+j-1,valid=index>=0&&index<options.length;b.hidden=!valid;if(!valid)return;
@@ -61,11 +61,16 @@ function updateWorkshop(){
  document.querySelector('#ws-description').textContent=choice.description;document.querySelector('#ws-detail').textContent=wsTab==='chassis'?`Speed ${choice.speed} · Turn ${choice.turn} · ${wsIndex+1} / ${options.length} chassis`:`${wsIndex+1} / ${options.length} · ${choice.cells?choice.cells+' cells · '+choice.reload+'s cell reload':choice.charge?'Charge '+choice.charge+'s':choice.range?'Range '+choice.range:''}${choice.energy?' · Uses power':''}`;
  document.querySelector('#ws-save-state').textContent=wsMessage||'Tap a card to equip it';renderCarousel();drawWorkshop();
 }
+function updateCarouselAudio(dt){const key=wsTab+':'+wsSlot+':'+wsFilter;
+ if(key!==carouselSoundKey){carouselSoundKey=key;carouselSoundPosition=carouselPosition;GameAudio.carousel(0);return;}
+ const speed=dt>0?Math.abs(carouselPosition-carouselSoundPosition)/dt:0;carouselSoundPosition=carouselPosition;
+ GameAudio.carousel((swipe||carouselMoving)&&speed>.015?Math.min(1,speed/3):0);
+}
 function animateWorkshop(dt){
  updateMonitorGlitch(dt);updateBeamRefresh(dt);GameAudio.workshop(dt);
- if(swipe||!carouselMoving)return;const pull=(carouselTarget-carouselPosition)*64;carouselVelocity=(carouselVelocity+pull*dt)*Math.exp(-13*dt);carouselPosition+=carouselVelocity*dt;
+ if(swipe||!carouselMoving){updateCarouselAudio(dt);return;}const pull=(carouselTarget-carouselPosition)*64;carouselVelocity=(carouselVelocity+pull*dt)*Math.exp(-13*dt);carouselPosition+=carouselVelocity*dt;
  const end=wsOptions().length-1;if(carouselPosition<=0){carouselPosition=0;if(carouselVelocity<0)carouselVelocity=0;}if(carouselPosition>=end){carouselPosition=end;if(carouselVelocity>0)carouselVelocity=0;}
- if(Math.abs(carouselTarget-carouselPosition)<.002&&Math.abs(carouselVelocity)<.02){carouselPosition=carouselTarget;carouselVelocity=0;carouselMoving=false;GameAudio.menu('settle');}renderCarousel();
+ if(Math.abs(carouselTarget-carouselPosition)<.002&&Math.abs(carouselVelocity)<.02){carouselPosition=carouselTarget;carouselVelocity=0;carouselMoving=false;}renderCarousel();updateCarouselAudio(dt);
 }
 function drawWorkshop(){
  if(!workshopOpen||!spritesReady)return;const box=wsCanvas.getBoundingClientRect(),W=Math.max(1,box.width),H=Math.max(1,box.height),d=Math.min(devicePixelRatio||1,2);if(wsCanvas.width!==Math.round(W*d)||wsCanvas.height!==Math.round(H*d)){wsCanvas.width=Math.round(W*d);wsCanvas.height=Math.round(H*d);}const g=wsContext;g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,W,H);const cfg=previewLoadout(),cls=CHASSIS.find(c=>c.id===cfg.chassis),fit=Math.max(.1,Math.min(W*.52/(124*MECH_SCALE),(H-38)/(116*MECH_SCALE)));const cy=H/2+10;

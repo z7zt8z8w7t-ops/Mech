@@ -1,10 +1,10 @@
 'use strict';
 // All samples are local and cached. Audio is unlocked by a real user gesture.
 const GameAudio=(()=>{
- const approvedSamples=['eject-klaxon','cockpit-lights','page-turn','chassis-explosion','escape-rocket','breach-approved', 'scatter-approved', 'arc-approved', 'lance-charge', 'lance-fire', 'mini-launch', 'rocket-launch', 'heavy-launch', 'emp-launch', 'emp-impact', 'cluster-whistle', 'heavy-impact', 'rocket-impact', 'cluster-burst', 'cluster-impact'];
- const ids=[...approvedSamples,'machine','autocannon','rail','siege','gatling','pulse','beam','plasma','accelerator','charge','launch','explosion','step-left','step-right','turret-start','turret-turn','turret-brake','ui-click','ui-tick','ui-settle','workshop-bed'];
+ const approvedSamples=['hardpoint-select','weapon-select','carousel-whirr','eject-klaxon','cockpit-lights','page-turn','chassis-explosion','escape-rocket','breach-approved', 'scatter-approved', 'arc-approved', 'lance-charge', 'lance-fire', 'mini-launch', 'rocket-launch', 'heavy-launch', 'emp-launch', 'emp-impact', 'cluster-whistle', 'heavy-impact', 'rocket-impact', 'cluster-burst', 'cluster-impact'];
+ const ids=[...approvedSamples,'machine','autocannon','rail','siege','gatling','pulse','beam','plasma','accelerator','charge','launch','explosion','step-left','step-right','turret-start','turret-turn','turret-brake','ui-click','workshop-bed'];
  const buffers={},loops=new Map(),voices=new Set(),lastFire=[-99,-99,-99,-99];
- let roomVoice=null,lastUi=-99,roomPowered=false,klaxonVoice=null,pageVoice=null;
+ let roomVoice=null,lastUi=-99,roomPowered=false,klaxonVoice=null,pageVoice=null,carouselVoice=null;
  let ac=null,master=null,effects=null,systems=null,loading=null,noise=null,shieldWas=false,turretWas=false;
  let weaponFast=null,weaponHeavy=null,machineRoom=null;const reverbs=[];
  const heavySounds=new Set(['autocannon','scatter','breach','rail','siege','plasma','lance','accelerator','launch','explosion']);
@@ -43,10 +43,16 @@ const GameAudio=(()=>{
   let v=loops.get(key);if(!v){const source=type==='noise'?ac.createBufferSource():ac.createOscillator(),amp=ac.createGain(),filter=ac.createBiquadFilter();if(type==='noise'){source.buffer=noise;source.loop=true;}else source.type=type;filter.type='lowpass';filter.frequency.value=type==='noise'?1100:450;const panner=ac.createStereoPanner?ac.createStereoPanner():ac.createGain();if(panner.pan)panner.pan.value=pan;source.connect(filter);filter.connect(amp);amp.connect(panner);panner.connect(/^(flame|hiss|motor)/.test(key)?weaponFast:systems);amp.gain.value=0;source.start();v={source,amp,panner,filter};voices.add(v);source.onended=()=>{voices.delete(v);source.disconnect();filter.disconnect();amp.disconnect();panner.disconnect();};loops.set(key,v);}
   if(v.source.frequency)v.source.frequency.setTargetAtTime(frequency,ac.currentTime,.08);v.amp.gain.setTargetAtTime(gain,ac.currentTime,.04);
  }
- function stopAll(keepRoom=false){klaxonVoice=null;pageVoice=null;for(const v of [...voices])if(!(keepRoom===true&&v===roomVoice))stop(v,.025);if(keepRoom!==true)roomVoice=null;for(const r of reverbs){r.node.buffer=null;r.node.buffer=r.impulse;}loops.clear();lastFire.fill(-99);shieldWas=false;turretWas=false;stopBoot();}
- function menu(kind='click'){if(!ac||settings.muted)return;const now=ac.currentTime;if(now-lastUi<(kind==='tick'?.045:.025))return;lastUi=now;voice(kind==='tick'?'ui-tick':kind==='settle'?'ui-settle':'ui-click',{gain:kind==='tick'?.24:.38,bus:'dry'});}
- function workshop(dt=0){const online=workshopOpen&&!document.hidden&&!settings.muted&&(roomPowered||document.body.classList?.contains?.('cockpit-online'))&&!document.body.classList?.contains?.('story-active');if(online){if(!roomVoice){roomVoice=voice('workshop-bed',{gain:.85,loop:true,bus:'systems'});if(roomVoice){roomVoice.amp.gain.cancelScheduledValues(ac.currentTime);roomVoice.amp.gain.setValueAtTime(0,ac.currentTime);roomVoice.amp.gain.linearRampToValueAtTime(.85,ac.currentTime+1.6);}}}else if(roomVoice){stop(roomVoice,.6);roomVoice=null;}}
- function workshopPower(on){roomPowered=on;if(on)unlock().then(()=>workshop());else workshop();}
+ function stopAll(keepRoom=false){klaxonVoice=null;pageVoice=null;carouselVoice=null;for(const v of [...voices])if(!(keepRoom===true&&v===roomVoice))stop(v,.025);if(keepRoom!==true)roomVoice=null;for(const r of reverbs){r.node.buffer=null;r.node.buffer=r.impulse;}loops.clear();lastFire.fill(-99);shieldWas=false;turretWas=false;stopBoot();}
+ function menu(kind='click'){if(kind==='tick'||kind==='settle'||!ac||settings.muted)return;const now=ac.currentTime;if(now-lastUi<.025)return;lastUi=now;const id=kind==='hardpoint'?'hardpoint-select':kind==='weapon'?'weapon-select':'ui-click';voice(id,{gain:kind==='click'?.38:.85,bus:'dry'});}
+ function carousel(speed=0){speed=Math.max(0,Math.min(1,speed));const online=workshopOpen&&!document.hidden&&!settings.muted&&document.body.classList?.contains?.('cockpit-online')&&!document.body.classList?.contains?.('story-active');
+  if(!online||speed<=.005){if(carouselVoice){carouselVoice.source.playbackRate.setTargetAtTime(.68,ac.currentTime,.07);stop(carouselVoice,.18);carouselVoice=null;}return;}
+  if(!ac||ac.state!=='running')return;
+  if(!carouselVoice||!voices.has(carouselVoice))carouselVoice=voice('carousel-whirr',{gain:0,rate:.72+.38*speed,loop:true,bus:'dry'});
+  if(carouselVoice){carouselVoice.source.playbackRate.setTargetAtTime(.72+.38*speed,ac.currentTime,.06);carouselVoice.amp.gain.setTargetAtTime(.45+.4*speed,ac.currentTime,.06);}
+ }
+ function workshop(dt=0){if(!workshopOpen||document.hidden||settings.muted||document.body.classList?.contains?.('story-active'))carousel(0);const online=workshopOpen&&!document.hidden&&!settings.muted&&(roomPowered||document.body.classList?.contains?.('cockpit-online'))&&!document.body.classList?.contains?.('story-active');if(online){if(!roomVoice){roomVoice=voice('workshop-bed',{gain:.85,loop:true,bus:'systems'});if(roomVoice){roomVoice.amp.gain.cancelScheduledValues(ac.currentTime);roomVoice.amp.gain.setValueAtTime(0,ac.currentTime);roomVoice.amp.gain.linearRampToValueAtTime(.85,ac.currentTime+1.6);}}}else if(roomVoice){stop(roomVoice,.6);roomVoice=null;}}
+ function workshopPower(on){if(!on)carousel(0);roomPowered=on;if(on)unlock().then(()=>workshop());else workshop();}
  async function pageTurn(isCurrent=()=>true){await unlock();if(!isCurrent())return null;if(pageVoice)stop(pageVoice,.01);pageVoice=voice('page-turn',{gain:.8,bus:'dry'});return {duration:buffers['page-turn']?.duration||1.62,started:performance.now()};}
  function stopPageTurn(){if(pageVoice)stop(pageVoice,.025);pageVoice=null;}
  function ejectionWarning(on){if(!on){if(klaxonVoice)stop(klaxonVoice,.02);klaxonVoice=null;return;}if(!klaxonVoice||!voices.has(klaxonVoice))klaxonVoice=voice('eject-klaxon',{gain:.85,bus:'systems'});}
@@ -102,7 +108,7 @@ const GameAudio=(()=>{
  function configure(key,value){if(key==='muted')settings.muted=!!value;else settings[key]=Math.max(0,Math.min(1,Number(value)));try{localStorage.setItem('mech-audio-v1',JSON.stringify(settings));}catch{}levels();if(settings.muted)stopAll();}
  if(typeof document.addEventListener==='function'){
   document.addEventListener('pointerdown',unlock,{capture:true});document.addEventListener('keydown',unlock,{capture:true});
-  document.addEventListener('click',e=>{const b=e.target?.closest?.('button,[data-info-slot]');if(!b||b.disabled||['story-next','story-back'].includes(b.id)||b.closest?.('.ws-card')||b.closest?.('#panel')||b.closest?.('header')&&!b.closest?.('#workshop-open'))return;unlock().then(()=>menu('click'));},{capture:true});
+  document.addEventListener('click',e=>{const b=e.target?.closest?.('button,[data-info-slot]');if(!b||b.disabled||['story-next','story-back','ws-prev','ws-next'].includes(b.id)||b.closest?.('[data-info-slot]')||b.closest?.('.ws-card')||b.closest?.('#panel')||b.closest?.('header')&&!b.closest?.('#workshop-open'))return;unlock().then(()=>menu('click'));},{capture:true});
   document.addEventListener('pointerup',()=>{if(ac)sync();});document.addEventListener('visibilitychange',()=>{if(document.hidden){stopAll();if(ac)ac.suspend().catch(()=>{});}});window.addEventListener('blur',stopAll);
  }
  function mountControls(){if(typeof document.body.insertAdjacentHTML!=='function')return;
@@ -110,7 +116,7 @@ const GameAudio=(()=>{
   for(const key of ['effects','systems','muted']){const el=document.querySelector('#audio-'+key);if(key==='muted')el.checked=settings[key];else el.value=settings[key];el.addEventListener('input',()=>configure(key,key==='muted'?el.checked:el.value));}
   document.querySelector('#audio-settings').addEventListener('pointerdown',()=>unlock().then(()=>{document.querySelector('#audio-ready').textContent=ac?'Sound ready':'Audio unavailable';}));
  }
- mountControls();return {ejectionWarning,workshopPower,pageTurn,stopPageTurn,detonation,escape,boot,welcome,stopBoot,unlock,menu,workshop,trainingFire,clearGame:()=>stopAll(true),shot,explosion,split,sync,motion,stopAll,configure,ids};
+ mountControls();return {carousel,ejectionWarning,workshopPower,pageTurn,stopPageTurn,detonation,escape,boot,welcome,stopBoot,unlock,menu,workshop,trainingFire,clearGame:()=>stopAll(true),shot,explosion,split,sync,motion,stopAll,configure,ids};
 })();
 
 // Hook actual accepted shots, not fire-button presses or blocked attempts.
