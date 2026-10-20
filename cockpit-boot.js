@@ -9,14 +9,17 @@ window.CockpitBoot=(()=>{
  function clear(){epoch++;timers.forEach(clearTimeout);timers=[];GameAudio?.stopBoot();}
  function finish(){clear();running=false;hologram.hidden=true;overlay.hidden=true;body.classList.remove('cockpit-awaiting','cockpit-short','cockpit-welcome-out');const token=epoch;later(()=>{if(token!==epoch)return;body.classList.remove('cockpit-booting');menu.style.visibility='';menu.inert=false;body.classList.add('cockpit-online');},200);}
  function start(short=false){
-  menu.style.visibility='hidden';menu.inert=true;clear();running=true;powered=true;const token=epoch;overlay.hidden=false;power.hidden=false;power.disabled=true;power.classList.add('powered');power.setAttribute('aria-label','Cockpit power on');hologram.hidden=false;body.classList.remove('cockpit-awaiting','cockpit-online','cockpit-booting','cockpit-welcome-out');void overlay.offsetWidth;body.classList.add('cockpit-booting');body.classList.toggle('cockpit-short',short);status.textContent=short?'PROJECTOR INITIALISING':'SYSTEM INITIALISING';
-  GameAudio?.workshopPower(true);GameAudio?.boot(short);
-  later(()=>{if(token===epoch)status.textContent='PROJECTOR ONLINE';},short?450:1700);
-  later(()=>{if(token!==epoch)return;status.textContent='WELCOME, PILOT';
-   const minimum=short?700:1500,started=Date.now();let leaving=false;
-   const reveal=()=>{if(leaving||token!==epoch)return;leaving=true;later(()=>{if(token!==epoch)return;body.classList.add('cockpit-welcome-out');later(finish,450);},Math.max(0,minimum-(Date.now()-started)));};
-   if(short)reveal();else{GameAudio?.welcome(reveal);later(reveal,4500);}
-  },short?650:2350);
+  menu.style.visibility='hidden';menu.inert=true;clear();running=true;powered=true;const token=epoch;overlay.hidden=false;power.hidden=false;power.disabled=true;power.classList.add('powered');power.setAttribute('aria-label','Cockpit power on');hologram.hidden=false;body.classList.remove('cockpit-online','cockpit-booting','cockpit-welcome-out');body.classList.add('cockpit-awaiting');body.classList.toggle('cockpit-short',short);status.textContent=short?'PROJECTOR INITIALISING':'SYSTEM INITIALISING';
+  GameAudio?.workshopPower(true);
+  // The light animation starts with the decoded electrical clip, never before it.
+  const visual=()=>{if(token!==epoch)return;body.classList.remove('cockpit-awaiting');void overlay.offsetWidth;body.classList.add('cockpit-booting');
+   later(()=>{if(token===epoch)status.textContent='PROJECTOR ONLINE';},short?450:2000);
+   later(()=>{if(token!==epoch)return;status.textContent='WELCOME, PILOT';
+    const minimum=short?700:1500,started=Date.now();let leaving=false;
+    const reveal=()=>{if(leaving||token!==epoch)return;leaving=true;later(()=>{if(token!==epoch)return;body.classList.add('cockpit-welcome-out');later(finish,450);},Math.max(0,minimum-(Date.now()-started)));};
+    if(short)reveal();else{GameAudio?.welcome(reveal);later(reveal,4500);}
+   },short?650:2800);
+  };Promise.resolve(GameAudio?.boot(short)).then(visual,visual);
  }
  power.onclick=()=>start(false);document.querySelector('#boot-skip').onclick=finish;
  function open(){menu.style.visibility='hidden';menu.inert=true;if(powered){start(true);return;}overlay.hidden=false;power.hidden=false;hologram.hidden=true;body.classList.add('cockpit-awaiting');body.classList.remove('cockpit-online');}

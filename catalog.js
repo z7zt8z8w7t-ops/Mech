@@ -1,5 +1,5 @@
 'use strict';
-const VERSION='0.56';
+const VERSION='0.57';
 const CHASSIS=[{id:'Recon',r:17,speed:175,turn:3.2,tag:'Fast reconnaissance',description:'Quick movement and fast chassis turning.',front:[0,40,510,780]},{id:'Assault',r:21,speed:115,turn:2.3,tag:'Balanced combat chassis',description:'The locked size baseline. Balanced handling.',front:[525,40,530,780]},{id:'War Tank',r:26,speed:75,turn:1.5,tag:'Heavy battlefield platform',description:'Larger silhouette and deliberate movement.',front:[1070,40,640,780]}];
 const SLOT_NAMES=['Left arm','Left shoulder','Right shoulder','Right arm'];
 const WEAPONS=[

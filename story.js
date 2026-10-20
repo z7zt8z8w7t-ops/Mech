@@ -10,7 +10,7 @@ window.StoryFlow=(()=>{
  // A textured mesh bends around a moving cylindrical fold, showing the paper back.
  const curl=document.createElement('canvas');curl.id='story-curl';curl.hidden=true;screen.appendChild(curl);
  let curlFrame=0;
- function cancelCurl(){cancelAnimationFrame(curlFrame);curl.hidden=true;}
+ function cancelCurl(stopAudio=true){cancelAnimationFrame(curlFrame);curl.hidden=true;if(stopAudio)GameAudio.stopPageTurn?.();}
  function curlPoint(x,y,w,h,p,back){const radius=w*.13,fold=w*(1.04-p*1.55)+w*.28*(1-y/h)*Math.sin(Math.PI*p);const d=x-fold;let xx=x,z=0,theta=0;
   if(d>0){theta=Math.min(Math.PI,d/radius);xx=fold+radius*Math.sin(theta)-Math.max(0,d-Math.PI*radius);z=radius*(1-Math.cos(theta));}
   return {x:back?w-xx:xx,y:y+(y-h*.48)*z/w*.16,z,back:d>radius*Math.PI/2,shade:.90-.40*Math.sin(theta)};
@@ -32,9 +32,9 @@ window.StoryFlow=(()=>{
  }
  async function turnPage(n){if(busy)return;busy=true;const backwards=n<page,token=++epoch,old=new Image(),incoming=new Image();old.src=image.src;incoming.src='./assets/story/'+pages[n]+'.jpg';
   try{await Promise.all([old.decode(),incoming.decode()]);}catch{if(token===epoch){busy=false;error.hidden=false;}return;}
-  if(token!==epoch)return;GameAudio.pageTurn?.();showPage(n);if(reduced()){busy=false;return;}
-  curl.width=Math.min(1000,Math.round(screen.clientWidth));curl.height=Math.round(curl.width*screen.clientHeight/screen.clientWidth);curl.hidden=false;let began;
-  const animate=now=>{if(token!==epoch)return;if(began===undefined)began=now;const p=Math.min(1,(now-began)/950);paintCurl(old,p*p*(3-2*p),backwards);if(p<1)curlFrame=requestAnimationFrame(animate);else{cancelCurl();busy=false;}};curlFrame=requestAnimationFrame(animate);
+  if(token!==epoch)return;const timing=await GameAudio.pageTurn?.(()=>token===epoch);if(token!==epoch)return;showPage(n);if(reduced()){busy=false;return;}
+  curl.width=Math.min(1000,Math.round(screen.clientWidth));curl.height=Math.round(curl.width*screen.clientHeight/screen.clientWidth);curl.hidden=false;let began=timing?.started;const duration=(timing?.duration||1.62)*1000;
+  const animate=now=>{if(token!==epoch)return;if(began===undefined)began=now;const p=Math.min(1,(now-began)/duration);paintCurl(old,p*p*(3-2*p),backwards);if(p<1)curlFrame=requestAnimationFrame(animate);else{cancelCurl(false);busy=false;}};curlFrame=requestAnimationFrame(animate);
  }
  function tutorial(){if(busy)return;cancelCurl();epoch++;screen.hidden=true;document.body.classList.remove('story-active');clearInput();window.Tutorial.start();enterWorkshop();}
  start.onclick=begin;$('#story-back').onclick=()=>{if(busy)return;if(page<=0)splash();else turnPage(page-1);};$('#story-next').onclick=()=>{if(busy)return;if(page===3)tutorial();else turnPage(page+1);};$('#story-skip').onclick=tutorial;

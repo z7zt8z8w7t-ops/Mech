@@ -91,3 +91,8 @@ body.cockpit-online #workshop{animation:menuAfterWelcome .65s ease-out both}
 /* Darkened canopy glass keeps the hangar behind the projection. */
 #cockpit-window-tint{display:none;position:fixed;inset:0;z-index:17;pointer-events:none;background:rgba(1,8,10,.67);clip-path:polygon(22% 8.3%,78% 8.3%,93.5% 14%,98% 35%,98% 53%,94% 68%,77% 77%,23% 77%,6% 68%,2% 53%,2% 35%,6.5% 14%)}
 body.workshop-mode #cockpit-window-tint{display:block}
+
+/* Match the electrical transients in the selected 2.7-second lights-on clip. */
+@keyframes cockpitLights{0%,5%{opacity:.91}8%{opacity:.7}12%{opacity:.88}18%{opacity:.6}22%{opacity:.82}26%{opacity:.35}29%{opacity:.65}32%{opacity:.18}36%{opacity:.04}44%,100%{opacity:0}}
+@keyframes cockpitWash{0%,18%{opacity:0}22%{opacity:.2}26%{opacity:.65}29%{opacity:.15}32%{opacity:.85}36%,100%{opacity:1}}
+body.cockpit-booting:not(.cockpit-short) #cockpit-blackout,body.cockpit-booting:not(.cockpit-short) #cockpit-lightwash{animation-duration:2.7s}

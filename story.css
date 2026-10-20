@@ -25,3 +25,14 @@
 #story-curl{position:absolute;inset:0;z-index:3;width:100%;height:100%;pointer-events:none}
 #story-curl[hidden]{display:none}
 @media(max-width:500px){#story-nav{left:3%;right:3%;gap:4px}#story-nav button{font-size:clamp(12px,3vw,17px)}#story-page-label{font-size:8px!important}}
+
+/* Opaque cream buttons sit in the existing painted bottom margin, including PWA safe area. */
+#story-nav{height:2.65%;bottom:0;align-items:stretch;isolation:isolate}
+#story-nav button,#story-screen.cover #story-nav button{display:flex;align-items:center;justify-content:center;background:#eee4cb;color:#151510;text-shadow:none;border:0;border-radius:2px;padding:0 10px;font-size:clamp(18px,3.1vw,36px);line-height:1;box-shadow:none}
+#story-nav button:active,#story-screen.cover #story-nav button:active{background:#dbccaa}
+#story-screen.cover #story-nav{bottom:max(10px,env(safe-area-inset-bottom));height:44px}
+#story-screen.cover #story-next{background:#eee4cb;border:0;color:#151510;text-shadow:none}
+#story-page-label{align-self:center;background:#eee4cb;color:#393428;padding:2px 6px}
+@media(max-width:500px){#story-nav button,#story-screen.cover #story-nav button{font-size:clamp(12px,3vw,17px);padding:0 6px}}
+
+#story-screen.cover #story-page-label{background:#eee4cb;color:#393428;text-shadow:none}
